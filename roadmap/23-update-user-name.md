@@ -263,7 +263,7 @@ export default async function ProfilePage() {
           <CardContent className='p-4 flex justify-between flex-wrap'>
             <p className='text-sm py-2'>
               If you want to change the name associated with your {APP_NAME}
-              &apos;s account, you may do so below. Be sure to click the Save
+               's account, you may do so below. Be sure to click the Save
               Changes button when you are done.
             </p>
             <ProfileForm />

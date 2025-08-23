@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { DashboardSidebar } from '@/components/admin/dashboard-sidebar';
 import { useSession } from 'next-auth/react';
 import {
@@ -12,7 +12,7 @@ import {
   Plus,
   Trash2,
   Navigation
-} from "lucide-react";
+} from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -118,25 +118,25 @@ export default function NavbarPage() {
   if (!session) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       <DashboardSidebar />
 
-      <div className="lg:pl-64">
-        <header className="bg-white shadow">
-          <div className="flex items-center justify-between px-4 py-6 sm:px-6 lg:px-8">
+      <div className='lg:pl-64'>
+        <header className='bg-white shadow'>
+          <div className='flex items-center justify-between px-4 py-6 sm:px-6 lg:px-8'>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Navigation Management</h1>
-              <p className="text-sm text-gray-600">Manage website navigation menu items</p>
+              <h1 className='text-2xl font-bold text-gray-900'>Navigation Management</h1>
+              <p className='text-sm text-gray-600'>Manage website navigation menu items</p>
             </div>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
                   Saving...
                 </>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-2" />
+                  <Save className='h-4 w-4 mr-2' />
                   Save Changes
                 </>
               )}
@@ -144,45 +144,45 @@ export default function NavbarPage() {
           </div>
         </header>
 
-        <main className="px-4 py-8 sm:px-6 lg:px-8">
+        <main className='px-4 py-8 sm:px-6 lg:px-8'>
           {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading navigation...</p>
+            <div className='text-center py-12'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto'></div>
+              <p className='mt-2 text-gray-600'>Loading navigation...</p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {/* Add New Item */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Plus className="h-5 w-5" />
+                  <CardTitle className='flex items-center space-x-2'>
+                    <Plus className='h-5 w-5' />
                     <span>Add Navigation Item</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor="label">Label</Label>
+                      <Label htmlFor='label'>Label</Label>
                       <Input
-                        id="label"
-                        placeholder="e.g., About Us"
+                        id='label'
+                        placeholder='e.g., About Us'
                         value={newItem.label}
                         onChange={(e) => setNewItem({ ...newItem, label: e.target.value })}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="href">URL</Label>
+                      <Label htmlFor='href'>URL</Label>
                       <Input
-                        id="href"
-                        placeholder="e.g., /about"
+                        id='href'
+                        placeholder='e.g., /about'
                         value={newItem.href}
                         onChange={(e) => setNewItem({ ...newItem, href: e.target.value })}
                       />
                     </div>
                   </div>
-                  <Button onClick={addItem} className="mt-4" disabled={!newItem.label || !newItem.href}>
-                    <Plus className="h-4 w-4 mr-2" />
+                  <Button onClick={addItem} className='mt-4' disabled={!newItem.label || !newItem.href}>
+                    <Plus className='h-4 w-4 mr-2' />
                     Add Item
                   </Button>
                 </CardContent>
@@ -191,50 +191,50 @@ export default function NavbarPage() {
               {/* Navigation Items */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Navigation className="h-5 w-5" />
+                  <CardTitle className='flex items-center space-x-2'>
+                    <Navigation className='h-5 w-5' />
                     <span>Navigation Items</span>
                   </CardTitle>
                   <CardDescription>Drag and drop or use buttons to reorder items</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
+                  <div className='space-y-2'>
                     {navItems.map((item, index) => (
-                      <div key={item.id} className="flex items-center space-x-2 p-3 border rounded-lg">
-                        <div className="flex-1">
-                          <div className="font-medium">{item.label}</div>
-                          <div className="text-sm text-gray-500">{item.href}</div>
+                      <div key={item.id} className='flex items-center space-x-2 p-3 border rounded-lg'>
+                        <div className='flex-1'>
+                          <div className='font-medium'>{item.label}</div>
+                          <div className='text-sm text-gray-500'>{item.href}</div>
                         </div>
-                        <div className="flex items-center space-x-1">
+                        <div className='flex items-center space-x-1'>
                           <Button
-                            size="sm"
-                            variant="outline"
+                            size='sm'
+                            variant='outline'
                             onClick={() => moveItem(item.id, 'up')}
                             disabled={index === 0}
                           >
                             ↑
                           </Button>
                           <Button
-                            size="sm"
-                            variant="outline"
+                            size='sm'
+                            variant='outline'
                             onClick={() => moveItem(item.id, 'down')}
                             disabled={index === navItems.length - 1}
                           >
                             ↓
                           </Button>
                           <Button
-                            size="sm"
-                            variant="outline"
+                            size='sm'
+                            variant='outline'
                             onClick={() => removeItem(item.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className='h-4 w-4' />
                           </Button>
                         </div>
                       </div>
                     ))}
                   </div>
                   {navItems.length === 0 && (
-                    <p className="text-center text-gray-500 py-8">No navigation items yet. Add some above!</p>
+                    <p className='text-center text-gray-500 py-8'>No navigation items yet. Add some above!</p>
                   )}
                 </CardContent>
               </Card>

@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { DashboardSidebar } from '@/components/admin/dashboard-sidebar';
 import { useSession } from 'next-auth/react';
 import {
@@ -15,7 +15,7 @@ import {
   Phone,
   MapPin,
   Globe
-} from "lucide-react";
+} from 'lucide-react';
 
 interface FooterData {
   churchName: string;
@@ -174,25 +174,25 @@ export default function FooterPage() {
   if (!session) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       <DashboardSidebar />
 
-      <div className="lg:pl-64">
-        <header className="bg-white shadow">
-          <div className="flex items-center justify-between px-4 py-6 sm:px-6 lg:px-8">
+      <div className='lg:pl-64'>
+        <header className='bg-white shadow'>
+          <div className='flex items-center justify-between px-4 py-6 sm:px-6 lg:px-8'>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Footer Management</h1>
-              <p className="text-sm text-gray-600">Manage website footer content and links</p>
+              <h1 className='text-2xl font-bold text-gray-900'>Footer Management</h1>
+              <p className='text-sm text-gray-600'>Manage website footer content and links</p>
             </div>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
                   Saving...
                 </>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-2" />
+                  <Save className='h-4 w-4 mr-2' />
                   Save Changes
                 </>
               )}
@@ -200,43 +200,43 @@ export default function FooterPage() {
           </div>
         </header>
 
-        <main className="px-4 py-8 sm:px-6 lg:px-8">
+        <main className='px-4 py-8 sm:px-6 lg:px-8'>
           {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading footer...</p>
+            <div className='text-center py-12'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto'></div>
+              <p className='mt-2 text-gray-600'>Loading footer...</p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {/* Basic Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <FileImage className="h-5 w-5" />
+                  <CardTitle className='flex items-center space-x-2'>
+                    <FileImage className='h-5 w-5' />
                     <span>Basic Information</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className='space-y-4'>
                   <div>
-                    <Label htmlFor="churchName">Church Name</Label>
+                    <Label htmlFor='churchName'>Church Name</Label>
                     <Input
-                      id="churchName"
+                      id='churchName'
                       value={footerData.churchName}
                       onChange={(e) => setFooterData({ ...footerData, churchName: e.target.value })}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="tagline">Tagline</Label>
+                    <Label htmlFor='tagline'>Tagline</Label>
                     <Input
-                      id="tagline"
+                      id='tagline'
                       value={footerData.tagline}
                       onChange={(e) => setFooterData({ ...footerData, tagline: e.target.value })}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor='description'>Description</Label>
                     <Textarea
-                      id="description"
+                      id='description'
                       rows={3}
                       value={footerData.description}
                       onChange={(e) => setFooterData({ ...footerData, description: e.target.value })}
@@ -248,16 +248,16 @@ export default function FooterPage() {
               {/* Address */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <MapPin className="h-5 w-5" />
+                  <CardTitle className='flex items-center space-x-2'>
+                    <MapPin className='h-5 w-5' />
                     <span>Address</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className='space-y-4'>
                   <div>
-                    <Label htmlFor="street">Street Address</Label>
+                    <Label htmlFor='street'>Street Address</Label>
                     <Input
-                      id="street"
+                      id='street'
                       value={footerData.address.street}
                       onChange={(e) => setFooterData({
                         ...footerData,
@@ -265,11 +265,11 @@ export default function FooterPage() {
                       })}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor="city">City</Label>
+                      <Label htmlFor='city'>City</Label>
                       <Input
-                        id="city"
+                        id='city'
                         value={footerData.address.city}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -278,9 +278,9 @@ export default function FooterPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="state">State</Label>
+                      <Label htmlFor='state'>State</Label>
                       <Input
-                        id="state"
+                        id='state'
                         value={footerData.address.state}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -289,11 +289,11 @@ export default function FooterPage() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor="zipCode">ZIP Code</Label>
+                      <Label htmlFor='zipCode'>ZIP Code</Label>
                       <Input
-                        id="zipCode"
+                        id='zipCode'
                         value={footerData.address.zipCode}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -302,9 +302,9 @@ export default function FooterPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="country">Country</Label>
+                      <Label htmlFor='country'>Country</Label>
                       <Input
-                        id="country"
+                        id='country'
                         value={footerData.address.country}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -319,17 +319,17 @@ export default function FooterPage() {
               {/* Contact Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Phone className="h-5 w-5" />
+                  <CardTitle className='flex items-center space-x-2'>
+                    <Phone className='h-5 w-5' />
                     <span>Contact Information</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                <CardContent className='space-y-4'>
+                  <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor='phone'>Phone</Label>
                       <Input
-                        id="phone"
+                        id='phone'
                         value={footerData.contact.phone}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -338,10 +338,10 @@ export default function FooterPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor='email'>Email</Label>
                       <Input
-                        id="email"
-                        type="email"
+                        id='email'
+                        type='email'
                         value={footerData.contact.email}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -356,18 +356,18 @@ export default function FooterPage() {
               {/* Social Media */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Globe className="h-5 w-5" />
+                  <CardTitle className='flex items-center space-x-2'>
+                    <Globe className='h-5 w-5' />
                     <span>Social Media</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                <CardContent className='space-y-4'>
+                  <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor="facebook">Facebook</Label>
+                      <Label htmlFor='facebook'>Facebook</Label>
                       <Input
-                        id="facebook"
-                        placeholder="https://facebook.com/..."
+                        id='facebook'
+                        placeholder='https://facebook.com/...'
                         value={footerData.socialMedia.facebook}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -376,10 +376,10 @@ export default function FooterPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="instagram">Instagram</Label>
+                      <Label htmlFor='instagram'>Instagram</Label>
                       <Input
-                        id="instagram"
-                        placeholder="https://instagram.com/..."
+                        id='instagram'
+                        placeholder='https://instagram.com/...'
                         value={footerData.socialMedia.instagram}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -388,12 +388,12 @@ export default function FooterPage() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor="youtube">YouTube</Label>
+                      <Label htmlFor='youtube'>YouTube</Label>
                       <Input
-                        id="youtube"
-                        placeholder="https://youtube.com/..."
+                        id='youtube'
+                        placeholder='https://youtube.com/...'
                         value={footerData.socialMedia.youtube}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -402,10 +402,10 @@ export default function FooterPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="twitter">Twitter</Label>
+                      <Label htmlFor='twitter'>Twitter</Label>
                       <Input
-                        id="twitter"
-                        placeholder="https://twitter.com/..."
+                        id='twitter'
+                        placeholder='https://twitter.com/...'
                         value={footerData.socialMedia.twitter}
                         onChange={(e) => setFooterData({
                           ...footerData,
@@ -423,31 +423,31 @@ export default function FooterPage() {
                   <CardTitle>Quick Links</CardTitle>
                   <CardDescription>Manage footer navigation links</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className='space-y-4'>
                   {footerData.quickLinks.map((link, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div className="flex-1 grid grid-cols-2 gap-2">
+                    <div key={index} className='flex items-center space-x-2'>
+                      <div className='flex-1 grid grid-cols-2 gap-2'>
                         <Input
-                          placeholder="Link Label"
+                          placeholder='Link Label'
                           value={link.label}
                           onChange={(e) => updateQuickLink(index, 'label', e.target.value)}
                         />
                         <Input
-                          placeholder="URL (e.g., /about)"
+                          placeholder='URL (e.g., /about)'
                           value={link.href}
                           onChange={(e) => updateQuickLink(index, 'href', e.target.value)}
                         />
                       </div>
                       <Button
-                        size="sm"
-                        variant="outline"
+                        size='sm'
+                        variant='outline'
                         onClick={() => removeQuickLink(index)}
                       >
                         Remove
                       </Button>
                     </div>
                   ))}
-                  <Button onClick={addQuickLink} variant="outline">
+                  <Button onClick={addQuickLink} variant='outline'>
                     Add Quick Link
                   </Button>
                 </CardContent>

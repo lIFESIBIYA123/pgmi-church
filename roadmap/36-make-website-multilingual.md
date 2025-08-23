@@ -2508,7 +2508,7 @@ export default function CredentialsSignInForm() {
             <Button type='submit'>Sign In</Button>
           </div>
           <div className='text-sm'>
-            By signing in, you agree to {site.name}&apos;s{' '}
+            By signing in, you agree to {site.name} 's{' '}
             <Link href='/page/conditions-of-use'>Conditions of Use</Link> and{' '}
             <Link href='/page/privacy-policy'>Privacy Notice.</Link>
           </div>
@@ -2807,7 +2807,7 @@ export default function CredentialsSignInForm() {
             <Button type='submit'>Sign Up</Button>
           </div>
           <div className='text-sm'>
-            By creating an account, you agree to {site.name}&apos;s{' '}
+            By creating an account, you agree to {site.name} 's{' '}
             <Link href='/page/conditions-of-use'>Conditions of Use</Link> and{' '}
             <Link href='/page/privacy-policy'> Privacy Notice. </Link>
           </div>
@@ -3002,7 +3002,7 @@ export default async function ProfilePage() {
           <CardContent className='p-4 flex justify-between flex-wrap'>
             <p className='text-sm py-2'>
               If you want to change the name associated with your {site.name}
-              &apos;s account, you may do so below. Be sure to click the Save
+               's account, you may do so below. Be sure to click the Save
               Changes button when you are done.
             </p>
             <ProfileForm />
@@ -7241,19 +7241,19 @@ export default function CheckoutFooter() {
         <Link href='/page/contact-us'>Contact Us</Link>{' '}
       </p>
       <p>
-        For an item ordered from {site.name}: When you click the &apos;Place
-        Your Order&apos; button, we will send you an e-mail acknowledging
+        For an item ordered from {site.name}: When you click the  'Place
+        Your Order ' button, we will send you an e-mail acknowledging
         receipt of your order. Your contract to purchase an item will not be
         complete until we send you an e-mail notifying you that the item has
         been shipped to you. By placing your order, you agree to {site.name}
-        &apos;s <Link href='/page/privacy-policy'>privacy notice</Link> and
+         's <Link href='/page/privacy-policy'>privacy notice</Link> and
         <Link href='/page/conditions-of-use'> conditions of use</Link>.
       </p>
       <p>
         Within 30 days of delivery, you may return new, unopened merchandise in
         its original condition. Exceptions and restrictions apply.{' '}
         <Link href='/page/returns-policy'>
-          See {site.name}&apos;s Returns Policy.
+          See {site.name} 's Returns Policy.
         </Link>
       </p>
     </div>
@@ -7447,8 +7447,8 @@ const CheckoutForm = () => {
             </Button>
 
             <p className='text-xs text-center py-2'>
-              Choose a payment method to continue checking out. You&apos;ll
-              still have a chance to review and edit your order before it&apos;s
+              Choose a payment method to continue checking out. You 'll
+              still have a chance to review and edit your order before it 's
               final.
             </p>
           </div>
@@ -7459,7 +7459,7 @@ const CheckoutForm = () => {
               Place Your Order
             </Button>
             <p className='text-xs text-center py-2'>
-              By placing your order, you agree to {site.name}&apos;s{' '}
+              By placing your order, you agree to {site.name} 's{' '}
               <Link href='/page/privacy-policy'>privacy notice</Link> and
               <Link href='/page/conditions-of-use'> conditions of use</Link>.
             </p>
@@ -7961,7 +7961,7 @@ const CheckoutForm = () => {
                       {' '}
                       By placing your order, you agree to {
                         site.name
-                      }&apos;s{' '}
+                      } 's{' '}
                       <Link href='/page/privacy-policy'>privacy notice</Link>{' '}
                       and
                       <Link href='/page/conditions-of-use'>

@@ -173,19 +173,19 @@ export default function CheckoutFooter() {
         <Link href='/page/contact-us'>Contact Us</Link>{' '}
       </p>
       <p>
-        For an item ordered from {APP_NAME}: When you click the &apos;Place Your
-        Order&apos; button, we will send you an e-mail acknowledging receipt of
+        For an item ordered from {APP_NAME}: When you click the  'Place Your
+        Order ' button, we will send you an e-mail acknowledging receipt of
         your order. Your contract to purchase an item will not be complete until
         we send you an e-mail notifying you that the item has been shipped to
         you. By placing your order, you agree to {APP_NAME}
-        &apos;s <Link href='/page/privacy-policy'>privacy notice</Link> and
+         's <Link href='/page/privacy-policy'>privacy notice</Link> and
         <Link href='/page/conditions-of-use'> conditions of use</Link>.
       </p>
       <p>
         Within 30 days of delivery, you may return new, unopened merchandise in
         its original condition. Exceptions and restrictions apply.{' '}
         <Link href='/page/returns-policy'>
-          See {APP_NAME}&apos;s Returns Policy.
+          See {APP_NAME} 's Returns Policy.
         </Link>
       </p>
     </div>
@@ -470,8 +470,8 @@ const CheckoutForm = () => {
             </Button>
 
             <p className='text-xs text-center py-2'>
-              Choose a payment method to continue checking out. You&apos;ll
-              still have a chance to review and edit your order before it&apos;s
+              Choose a payment method to continue checking out. You 'll
+              still have a chance to review and edit your order before it 's
               final.
             </p>
           </div>
@@ -482,7 +482,7 @@ const CheckoutForm = () => {
               Place Your Order
             </Button>
             <p className='text-xs text-center py-2'>
-              By placing your order, you agree to {APP_NAME}&apos;s{' '}
+              By placing your order, you agree to {APP_NAME} 's{' '}
               <Link href='/page/privacy-policy'>privacy notice</Link> and
               <Link href='/page/conditions-of-use'> conditions of use</Link>.
             </p>
@@ -983,7 +983,7 @@ const CheckoutForm = () => {
                     </p>
                     <p className='text-xs'>
                       {' '}
-                      By placing your order, you agree to {APP_NAME}&apos;s <Link href='/page/privacy-policy'>
+                      By placing your order, you agree to {APP_NAME} 's <Link href='/page/privacy-policy'>
                         privacy notice
                       </Link> and
                       <Link href='/page/conditions-of-use'>

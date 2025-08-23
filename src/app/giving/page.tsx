@@ -348,7 +348,7 @@ export default function GivingPage() {
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
               We believe in transparency and accountability in how we use the resources
-              entrusted to us. Your gifts are used wisely to further God&apos;s kingdom.
+              entrusted to us. Your gifts are used wisely to further God 's kingdom.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
@@ -390,7 +390,7 @@ export default function GivingPage() {
             Partner with Us
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Your generous giving enables us to continue our mission of spreading God&apos;s love,
+            Your generous giving enables us to continue our mission of spreading God 's love,
             serving our community, and reaching the world with the Gospel.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
