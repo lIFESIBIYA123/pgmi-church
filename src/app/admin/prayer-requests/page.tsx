@@ -8,7 +8,6 @@ import { DashboardSidebar } from '@/components/admin/dashboard-sidebar';
 import { useSession } from 'next-auth/react';
 import {
   Heart,
-  User,
   Mail,
   Phone,
   Calendar,
@@ -17,8 +16,19 @@ import {
   Clock,
   Eye
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+// types/next-auth.d.ts
+import { DefaultSession } from "next-auth";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+      // Add other custom properties
+    } & DefaultSession["user"]
+  }
+}
 interface PrayerRequest {
   _id: string;
   name: string;
@@ -108,7 +118,7 @@ export default function PrayerRequestsPage() {
   if (!session) return <div>Loading...</div>;
 
   // Check if user has pastor role
-  const userRole = (session.user as any)?.role;
+  const userRole = session.user?.role;
   if (userRole !== 'pastor') {
     return (
       <div className="min-h-screen bg-gray-50">

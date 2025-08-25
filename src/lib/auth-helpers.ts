@@ -5,7 +5,7 @@ export type Role = "admin" | "editor" | "viewer" | "pastor";
 
 export async function getAuthToken(req: NextRequest) {
 	const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-	return token as (Record<string, any> | null);
+	return token;
 }
 
 export async function requireRole(req: NextRequest, allowed: Role[] | "any") {

@@ -10,11 +10,8 @@ import {
   BookOpen,
   Calendar,
   Heart,
-  DollarSign,
   Users,
   MessageSquare,
-  TrendingUp,
-  Activity,
   Plus,
   LogOut
 } from "lucide-react";
@@ -27,6 +24,18 @@ interface DashboardStats {
   contacts: number;
   ministries: number;
   users: number;
+}
+
+import { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+      // Add other custom properties you need
+    } & DefaultSession["user"]
+  }
 }
 
 export default function AdminPage() {
@@ -88,7 +97,7 @@ export default function AdminPage() {
               <p className="text-sm text-gray-600">Welcome back, {session.user?.name}</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant="secondary">{(session.user as any)?.role ?? 'viewer'}</Badge>
+              <Badge variant="secondary">{session.user?.role ?? 'viewer'}</Badge>
               <Button variant="outline" onClick={() => signOut()}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout

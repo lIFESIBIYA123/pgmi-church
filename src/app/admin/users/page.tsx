@@ -12,8 +12,6 @@ import {
   Plus,
   Edit,
   Trash2,
-  UserPlus,
-  Shield,
   Mail,
   Calendar,
   Lock
@@ -86,6 +84,7 @@ export default function UsersPage() {
       }
     } catch (error) {
       console.error('Error saving user:', error);
+      alert('Error saving user');
     }
   };
 
@@ -114,6 +113,7 @@ export default function UsersPage() {
       }
     } catch (error) {
       console.error('Error deleting user:', error);
+      alert('Error deleting user');
     }
   };
 
@@ -145,7 +145,7 @@ export default function UsersPage() {
 
   if (!session) return <div>Loading...</div>;
 
-  const isMainAdmin = (session.user as any)?.isMainAdmin;
+  const isMainAdmin = (session.user as { isMainAdmin?: boolean })?.isMainAdmin;
 
   if (!isMainAdmin) {
     return (
@@ -227,7 +227,7 @@ export default function UsersPage() {
                     <Label htmlFor="role">Role *</Label>
                     <Select
                       value={formData.role}
-                      onValueChange={(value: any) => setFormData({ ...formData, role: value })}
+                      onValueChange={(value: 'main-admin' | 'admin' | 'editor' | 'pastor') => setFormData({ ...formData, role: value })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select role" />

@@ -13,11 +13,11 @@ import {
   Building,
   MapPin,
   Phone,
-  Mail,
   Clock,
   Globe,
   Target,
-  Eye
+  AlertCircle,
+  CheckCircle
 } from "lucide-react";
 
 interface Settings {
@@ -56,7 +56,11 @@ export default function SettingsPage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [settings, setSettings] = useState<Settings>({});
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+
   const [formData, setFormData] = useState<Settings>({
     name: '',
     tagline: '',
@@ -89,56 +93,70 @@ export default function SettingsPage() {
     values: []
   });
 
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => {
+      setNotification({ type: null, message: '' });
+    }, 5000);
+  };
+
   useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch settings');
+        }
+
+        const data = await response.json();
+
+        setFormData({
+          name: data.name || '',
+          tagline: data.tagline || '',
+          description: data.description || '',
+          address: {
+            street: data.address?.street || '',
+            city: data.address?.city || '',
+            state: data.address?.state || '',
+            zipCode: data.address?.zipCode || '',
+            country: data.address?.country || ''
+          },
+          contact: {
+            phone: data.contact?.phone || '',
+            email: data.contact?.email || '',
+            officeHours: data.contact?.officeHours || ''
+          },
+          socialMedia: {
+            facebook: data.socialMedia?.facebook || '',
+            instagram: data.socialMedia?.instagram || '',
+            youtube: data.socialMedia?.youtube || '',
+            twitter: data.socialMedia?.twitter || ''
+          },
+          serviceTimes: {
+            sunday: data.serviceTimes?.sunday || '',
+            wednesday: data.serviceTimes?.wednesday || '',
+            friday: data.serviceTimes?.friday || ''
+          },
+          mission: data.mission || '',
+          vision: data.vision || '',
+          values: data.values || []
+        });
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        showNotification('error', 'Failed to load settings. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSettings();
   }, []);
-
-  const fetchSettings = async () => {
-    try {
-      const response = await fetch('/api/settings');
-      const data = await response.json();
-      setSettings(data);
-      setFormData({
-        name: data.name || '',
-        tagline: data.tagline || '',
-        description: data.description || '',
-        address: {
-          street: data.address?.street || '',
-          city: data.address?.city || '',
-          state: data.address?.state || '',
-          zipCode: data.address?.zipCode || '',
-          country: data.address?.country || ''
-        },
-        contact: {
-          phone: data.contact?.phone || '',
-          email: data.contact?.email || '',
-          officeHours: data.contact?.officeHours || ''
-        },
-        socialMedia: {
-          facebook: data.socialMedia?.facebook || '',
-          instagram: data.socialMedia?.instagram || '',
-          youtube: data.socialMedia?.youtube || '',
-          twitter: data.socialMedia?.twitter || ''
-        },
-        serviceTimes: {
-          sunday: data.serviceTimes?.sunday || '',
-          wednesday: data.serviceTimes?.wednesday || '',
-          friday: data.serviceTimes?.friday || ''
-        },
-        mission: data.mission || '',
-        vision: data.vision || '',
-        values: data.values || []
-      });
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+
     try {
       const response = await fetch('/api/settings', {
         method: 'PUT',
@@ -147,25 +165,52 @@ export default function SettingsPage() {
       });
 
       if (response.ok) {
-        alert('Settings saved successfully!');
-        fetchSettings();
+        showNotification('success', 'Settings saved successfully!');
       } else {
-        alert('Error saving settings');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save settings');
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Error saving settings');
+      showNotification('error', error instanceof Error ? error.message : 'Error saving settings');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleValuesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const values = e.target.value.split('\n').filter(v => v.trim());
-    setFormData({ ...formData, values });
+  const handleInputChange = (field: keyof Settings, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!session) return <div>Loading...</div>;
+  const handleNestedInputChange = (
+    section: 'address' | 'contact' | 'socialMedia' | 'serviceTimes',
+    field: string,
+    value: string
+  ) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleValuesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const values = e.target.value.split('\n').filter(v => v.trim());
+    setFormData(prev => ({ ...prev, values }));
+  };
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -180,6 +225,22 @@ export default function SettingsPage() {
             </div>
           </div>
         </header>
+
+        {/* Notification */}
+        {notification.type && (
+          <div className={`mx-4 mt-4 p-4 rounded-lg flex items-center space-x-2 ${
+            notification.type === 'success'
+              ? 'bg-green-50 text-green-800 border border-green-200'
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}>
+            {notification.type === 'success' ? (
+              <CheckCircle className="h-5 w-5" />
+            ) : (
+              <AlertCircle className="h-5 w-5" />
+            )}
+            <span>{notification.message}</span>
+          </div>
+        )}
 
         <main className="px-4 py-8 sm:px-6 lg:px-8">
           {loading ? (
@@ -203,8 +264,8 @@ export default function SettingsPage() {
                     <Label htmlFor="name">Church Name</Label>
                     <Input
                       id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      value={formData.name || ''}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
                     />
                   </div>
                   <div>
@@ -212,8 +273,8 @@ export default function SettingsPage() {
                     <Input
                       id="tagline"
                       placeholder="e.g., Growing in Faith, Serving in Love"
-                      value={formData.tagline}
-                      onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                      value={formData.tagline || ''}
+                      onChange={(e) => handleInputChange('tagline', e.target.value)}
                     />
                   </div>
                   <div>
@@ -222,8 +283,8 @@ export default function SettingsPage() {
                       id="description"
                       rows={3}
                       placeholder="Brief description of the church"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      value={formData.description || ''}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
                     />
                   </div>
                 </CardContent>
@@ -242,11 +303,8 @@ export default function SettingsPage() {
                     <Label htmlFor="street">Street Address</Label>
                     <Input
                       id="street"
-                      value={formData.address?.street}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        address: { ...formData.address, street: e.target.value }
-                      })}
+                      value={formData.address?.street || ''}
+                      onChange={(e) => handleNestedInputChange('address', 'street', e.target.value)}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -254,22 +312,16 @@ export default function SettingsPage() {
                       <Label htmlFor="city">City</Label>
                       <Input
                         id="city"
-                        value={formData.address?.city}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          address: { ...formData.address, city: e.target.value }
-                        })}
+                        value={formData.address?.city || ''}
+                        onChange={(e) => handleNestedInputChange('address', 'city', e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="state">State</Label>
                       <Input
                         id="state"
-                        value={formData.address?.state}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          address: { ...formData.address, state: e.target.value }
-                        })}
+                        value={formData.address?.state || ''}
+                        onChange={(e) => handleNestedInputChange('address', 'state', e.target.value)}
                       />
                     </div>
                   </div>
@@ -278,22 +330,16 @@ export default function SettingsPage() {
                       <Label htmlFor="zipCode">ZIP Code</Label>
                       <Input
                         id="zipCode"
-                        value={formData.address?.zipCode}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          address: { ...formData.address, zipCode: e.target.value }
-                        })}
+                        value={formData.address?.zipCode || ''}
+                        onChange={(e) => handleNestedInputChange('address', 'zipCode', e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="country">Country</Label>
                       <Input
                         id="country"
-                        value={formData.address?.country}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          address: { ...formData.address, country: e.target.value }
-                        })}
+                        value={formData.address?.country || ''}
+                        onChange={(e) => handleNestedInputChange('address', 'country', e.target.value)}
                       />
                     </div>
                   </div>
@@ -314,11 +360,8 @@ export default function SettingsPage() {
                       <Label htmlFor="phone">Phone</Label>
                       <Input
                         id="phone"
-                        value={formData.contact?.phone}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          contact: { ...formData.contact, phone: e.target.value }
-                        })}
+                        value={formData.contact?.phone || ''}
+                        onChange={(e) => handleNestedInputChange('contact', 'phone', e.target.value)}
                       />
                     </div>
                     <div>
@@ -326,11 +369,8 @@ export default function SettingsPage() {
                       <Input
                         id="email"
                         type="email"
-                        value={formData.contact?.email}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          contact: { ...formData.contact, email: e.target.value }
-                        })}
+                        value={formData.contact?.email || ''}
+                        onChange={(e) => handleNestedInputChange('contact', 'email', e.target.value)}
                       />
                     </div>
                   </div>
@@ -339,11 +379,8 @@ export default function SettingsPage() {
                     <Input
                       id="officeHours"
                       placeholder="e.g., Monday-Friday 9:00 AM - 5:00 PM"
-                      value={formData.contact?.officeHours}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        contact: { ...formData.contact, officeHours: e.target.value }
-                      })}
+                      value={formData.contact?.officeHours || ''}
+                      onChange={(e) => handleNestedInputChange('contact', 'officeHours', e.target.value)}
                     />
                   </div>
                 </CardContent>
@@ -364,11 +401,8 @@ export default function SettingsPage() {
                       <Input
                         id="sunday"
                         placeholder="e.g., 9:00 AM & 11:00 AM"
-                        value={formData.serviceTimes?.sunday}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          serviceTimes: { ...formData.serviceTimes, sunday: e.target.value }
-                        })}
+                        value={formData.serviceTimes?.sunday || ''}
+                        onChange={(e) => handleNestedInputChange('serviceTimes', 'sunday', e.target.value)}
                       />
                     </div>
                     <div>
@@ -376,11 +410,8 @@ export default function SettingsPage() {
                       <Input
                         id="wednesday"
                         placeholder="e.g., 7:00 PM"
-                        value={formData.serviceTimes?.wednesday}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          serviceTimes: { ...formData.serviceTimes, wednesday: e.target.value }
-                        })}
+                        value={formData.serviceTimes?.wednesday || ''}
+                        onChange={(e) => handleNestedInputChange('serviceTimes', 'wednesday', e.target.value)}
                       />
                     </div>
                     <div>
@@ -388,11 +419,8 @@ export default function SettingsPage() {
                       <Input
                         id="friday"
                         placeholder="e.g., 6:00 PM"
-                        value={formData.serviceTimes?.friday}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          serviceTimes: { ...formData.serviceTimes, friday: e.target.value }
-                        })}
+                        value={formData.serviceTimes?.friday || ''}
+                        onChange={(e) => handleNestedInputChange('serviceTimes', 'friday', e.target.value)}
                       />
                     </div>
                   </div>
@@ -414,11 +442,8 @@ export default function SettingsPage() {
                       <Input
                         id="facebook"
                         placeholder="https://facebook.com/..."
-                        value={formData.socialMedia?.facebook}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          socialMedia: { ...formData.socialMedia, facebook: e.target.value }
-                        })}
+                        value={formData.socialMedia?.facebook || ''}
+                        onChange={(e) => handleNestedInputChange('socialMedia', 'facebook', e.target.value)}
                       />
                     </div>
                     <div>
@@ -426,11 +451,8 @@ export default function SettingsPage() {
                       <Input
                         id="instagram"
                         placeholder="https://instagram.com/..."
-                        value={formData.socialMedia?.instagram}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          socialMedia: { ...formData.socialMedia, instagram: e.target.value }
-                        })}
+                        value={formData.socialMedia?.instagram || ''}
+                        onChange={(e) => handleNestedInputChange('socialMedia', 'instagram', e.target.value)}
                       />
                     </div>
                   </div>
@@ -440,11 +462,8 @@ export default function SettingsPage() {
                       <Input
                         id="youtube"
                         placeholder="https://youtube.com/..."
-                        value={formData.socialMedia?.youtube}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          socialMedia: { ...formData.socialMedia, youtube: e.target.value }
-                        })}
+                        value={formData.socialMedia?.youtube || ''}
+                        onChange={(e) => handleNestedInputChange('socialMedia', 'youtube', e.target.value)}
                       />
                     </div>
                     <div>
@@ -452,11 +471,8 @@ export default function SettingsPage() {
                       <Input
                         id="twitter"
                         placeholder="https://twitter.com/..."
-                        value={formData.socialMedia?.twitter}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          socialMedia: { ...formData.socialMedia, twitter: e.target.value }
-                        })}
+                        value={formData.socialMedia?.twitter || ''}
+                        onChange={(e) => handleNestedInputChange('socialMedia', 'twitter', e.target.value)}
                       />
                     </div>
                   </div>
@@ -478,8 +494,8 @@ export default function SettingsPage() {
                       id="mission"
                       rows={3}
                       placeholder="Our mission is to..."
-                      value={formData.mission}
-                      onChange={(e) => setFormData({ ...formData, mission: e.target.value })}
+                      value={formData.mission || ''}
+                      onChange={(e) => handleInputChange('mission', e.target.value)}
                     />
                   </div>
                   <div>
@@ -488,8 +504,8 @@ export default function SettingsPage() {
                       id="vision"
                       rows={3}
                       placeholder="Our vision is to..."
-                      value={formData.vision}
-                      onChange={(e) => setFormData({ ...formData, vision: e.target.value })}
+                      value={formData.vision || ''}
+                      onChange={(e) => handleInputChange('vision', e.target.value)}
                     />
                   </div>
                   <div>
@@ -498,7 +514,7 @@ export default function SettingsPage() {
                       id="values"
                       rows={4}
                       placeholder="Enter each value on a new line"
-                      value={formData.values?.join('\n')}
+                      value={formData.values?.join('\n') || ''}
                       onChange={handleValuesChange}
                     />
                   </div>

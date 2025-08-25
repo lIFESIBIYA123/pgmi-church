@@ -38,9 +38,13 @@ export async function POST(req: NextRequest) {
 		const filePath = path.join(uploadsDir, filename);
 		await writeFile(filePath, buffer);
 		return NextResponse.json({ url: `/uploads/${filename}` });
-	} catch (e: any) {
-		return NextResponse.json({ error: e.message }, { status: 500 });
-	}
+	} catch (e) {
+  return NextResponse.json(
+    { error: e instanceof Error ? e.message : "Internal server error" },
+    { status: 500 }
+  );
+}
+
 }
 
 

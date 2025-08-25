@@ -68,7 +68,7 @@ export default function ContactPage() {
       setSubmitStatus('success');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '', preferredContact: 'email' });
       setTimeout(() => setSubmitStatus('idle'), 5000);
-    } catch (err) {
+    } catch {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -132,7 +132,7 @@ export default function ContactPage() {
             Contact Us
           </h1>
           <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
-            We'd love to hear from you! Get in touch with us for any questions, prayer requests, or to learn more about our church.
+            We would love to hear from you! Get in touch with us for any questions, prayer requests, or to learn more about our church.
           </p>
         </div>
       </section>
@@ -169,7 +169,7 @@ export default function ContactPage() {
               <CardHeader>
                 <CardTitle className="text-2xl">Send us a Message</CardTitle>
                 <CardDescription>
-                  Fill out the form below and we'll get back to you as soon as possible.
+                  Fill out the form below and we will get back to you as soon as possible.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -408,11 +408,11 @@ export default function ContactPage() {
       <section className="py-16 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            We're Here for You
+            We are Here for You
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Whether you have a question, need prayer, or want to learn more about our church,
-            we're here to help. Don't hesitate to reach out!
+            we are here to help. Do not hesitate to reach out!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild variant="secondary" size="lg" className="text-lg px-8 py-6">

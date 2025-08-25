@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   Users,
   Play,
@@ -10,8 +9,6 @@ import {
   Globe,
   Coffee,
   Camera,
-  Music,
-  Calendar,
   MapPin,
   Clock
 } from "lucide-react";
@@ -242,7 +239,7 @@ export default function MinistriesPage() {
               Get Involved Today
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              There's a place for everyone in our church family. Whether you're interested in music,
+              There is a place for everyone in our church family. Whether you are interested in music,
               working with children, serving the community, or using your technical skills, we have
               opportunities that match your gifts and interests.
             </p>
@@ -289,7 +286,7 @@ export default function MinistriesPage() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Make a Difference</h3>
               <p className="text-muted-foreground">
-                Use your gifts and talents to impact lives and advance God's kingdom in our community.
+                Use your gifts and talents to impact lives and advance God&apos;s kingdom in our community.
               </p>
             </div>
           </div>
@@ -303,7 +300,7 @@ export default function MinistriesPage() {
             Ready to Serve?
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Take the first step toward getting involved in ministry. We'll help you find the perfect
+            Take the first step toward getting involved in ministry. We&apos;ll help you find the perfect
             opportunity to use your gifts and serve God.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

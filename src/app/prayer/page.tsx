@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, Users, Clock, CheckCircle, Send } from "lucide-react";
+import { CheckCircle, Send } from "lucide-react";
 import { BackgroundSlideshow } from "@/components/ui/background-slideshow";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,7 +43,7 @@ export default function PrayerPage() {
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => setSubmitStatus('idle'), 5000);
-    } catch (err) {
+    } catch {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

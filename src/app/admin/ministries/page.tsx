@@ -17,8 +17,6 @@ import {
   Clock,
   MapPin,
   Phone,
-  Mail,
-  Building
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 

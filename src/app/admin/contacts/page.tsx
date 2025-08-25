@@ -7,8 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { DashboardSidebar } from '@/components/admin/dashboard-sidebar';
 import { useSession } from 'next-auth/react';
 import {
-  MessageSquare,
-  User,
   Mail,
   Phone,
   Calendar,

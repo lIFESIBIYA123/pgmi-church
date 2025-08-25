@@ -115,9 +115,9 @@ export default function HomePage() {
               Welcome Home
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              At PGMI Church, we believe everyone has a place in God 's family.
-              Whether you 're new to faith or have been walking with Christ for years,
-              you 're welcome here. Join us as we grow together in God 's love and grace.
+              At PGMI Church, we believe everyone has a place in God&apos;s family.
+              Whether you&apos;re new to faith or have been walking with Christ for years,
+              you&apos;re welcome here. Join us as we grow together in God&apos;s love and grace.
             </p>
           </div>
 
@@ -127,7 +127,7 @@ export default function HomePage() {
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Heart className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle>God 's Love</CardTitle>
+                <CardTitle>God&apos;s Love</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
@@ -310,7 +310,7 @@ export default function HomePage() {
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Experience the love of Christ and become part of our growing community.
-            We 'd love to meet you!
+            We&apos;d love to meet you!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">

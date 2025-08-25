@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, User } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
@@ -10,6 +10,12 @@ const credentialsSchema = z.object({
 	email: z.string().email(),
 	password: z.string().min(6),
 });
+
+// Extended user interface
+interface ExtendedUser extends User {
+	role?: string;
+	isMainAdmin?: boolean;
+}
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -23,7 +29,7 @@ export const authOptions: NextAuthOptions = {
 				email: { label: "Email", type: "email" },
 				password: { label: "Password", type: "password" },
 			},
-			async authorize(credentials) {
+			async authorize(credentials): Promise<ExtendedUser | null> {
 				const parsed = credentialsSchema.safeParse(credentials);
 				if (!parsed.success) return null;
 				const { email, password } = parsed.data;
@@ -40,7 +46,7 @@ export const authOptions: NextAuthOptions = {
 					image: user.avatar,
 					role: user.role,
 					isMainAdmin: user.isMainAdmin,
-				} as any;
+				};
 			},
 		}),
 	],
@@ -62,14 +68,17 @@ export const authOptions: NextAuthOptions = {
 		},
 		async jwt({ token, user }) {
 			if (user) {
-				token.role = (user as any).role;
-				token.isMainAdmin = (user as any).isMainAdmin;
+				const extendedUser = user as ExtendedUser;
+				token.role = extendedUser.role;
+				token.isMainAdmin = extendedUser.isMainAdmin;
 			}
 			return token;
 		},
 		session({ session, token }) {
-			(session.user as any).role = token.role as string;
-			(session.user as any).isMainAdmin = token.isMainAdmin as boolean;
+			if (session.user) {
+				(session.user as ExtendedUser).role = token.role as string;
+				(session.user as ExtendedUser).isMainAdmin = token.isMainAdmin as boolean;
+			}
 			return session;
 		},
 	},

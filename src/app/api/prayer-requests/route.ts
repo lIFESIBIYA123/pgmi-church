@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { PrayerRequestModel } from "@/models/PrayerRequest";
-import { requireRole } from "@/lib/auth-helpers";
 
 export async function GET() {
 	await connectToDatabase();

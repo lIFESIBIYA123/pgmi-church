@@ -16,9 +16,7 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Users,
-  Star
-} from 'lucide-react';
+  Users} from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface Event {

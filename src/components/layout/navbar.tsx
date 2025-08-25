@@ -8,7 +8,27 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Menu, Shield } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 
-const defaultNav = [
+// ---- Types ----
+interface NavItem {
+  name: string
+  href?: string
+  visible?: boolean
+  order?: number
+}
+
+interface ApiNavItem {
+  label: string
+  url?: string
+  visible?: boolean
+  order?: number
+}
+
+interface UserWithRole {
+  role?: string
+}
+
+// ---- Default navigation ----
+const defaultNav: NavItem[] = [
   { name: 'Home', href: '/' },
   { name: 'About Us', href: '/about' },
   { name: 'Ministries', href: '/ministries' },
@@ -21,24 +41,27 @@ const defaultNav = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [items, setItems] = useState(defaultNav)
+  const [items, setItems] = useState<NavItem[]>(defaultNav)
   const { data: session } = useSession()
 
   useEffect(() => {
     fetch('/api/navbar')
       .then((res) => res.json())
-      .then((data) => {
-        if (data?.items?.length) {
-          setItems(
-            data.items
-              .filter((i: any) => i.visible !== false)
-              .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
-              .map((i: any) => ({ name: i.label, href: i.url }))
-          )
+      .then((data: { items?: ApiNavItem[] }) => {
+        if (Array.isArray(data?.items) && data.items.length > 0) {
+          const mappedItems: NavItem[] = data.items
+            .filter((i) => i.visible !== false)
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map((i) => ({ name: i.label, href: i.url }))
+          setItems(mappedItems)
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        // fail silently, fallback stays
+      })
   }, [])
+
+  const user = session?.user as UserWithRole | undefined
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -84,7 +107,8 @@ export function Navbar() {
                 </span>
               )
             )}
-            {(session?.user as any)?.role && (
+
+            {user?.role && (
               <Link
                 href="/admin"
                 className="flex items-center space-x-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
@@ -93,6 +117,7 @@ export function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
+
             <Link
               href="/giving"
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
@@ -118,7 +143,7 @@ export function Navbar() {
                         key={item.name}
                         href={item.href}
                         className="text-lg font-medium text-foreground transition-colors hover:text-primary"
-                        onClick={() => setMobileMenuOpen(false)} // ✅ closes menu after click
+                        onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
                       </Link>
@@ -131,7 +156,8 @@ export function Navbar() {
                       </span>
                     )
                   )}
-                  {(session?.user as any)?.role && (
+
+                  {user?.role && (
                     <Link
                       href="/admin"
                       className="flex items-center space-x-2 text-lg font-medium text-primary transition-colors hover:text-primary/80"
@@ -141,6 +167,7 @@ export function Navbar() {
                       <span>Admin</span>
                     </Link>
                   )}
+
                   <Link
                     href="/giving"
                     className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 mt-4"

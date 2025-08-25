@@ -11,7 +11,6 @@ import { useSession } from 'next-auth/react';
 import {
   Save,
   FileImage,
-  Mail,
   Phone,
   MapPin,
   Globe

@@ -5,11 +5,14 @@ import { requireRole } from "@/lib/auth-helpers";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireRole(req, ['pastor']);
     await connectToDatabase();
+
+    // Await the params Promise
+    const { id } = await params;
 
     const body = await req.json();
     const { status } = body;
@@ -19,7 +22,7 @@ export async function PUT(
     }
 
     const updated = await PrayerRequestModel.findByIdAndUpdate(
-      params.id,
+      id,
       { status },
       { new: true }
     );

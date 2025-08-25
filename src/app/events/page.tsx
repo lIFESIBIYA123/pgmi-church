@@ -10,10 +10,6 @@ import {
   Clock,
   MapPin,
   Users,
-  ExternalLink,
-  Filter,
-  Search,
-  Plus,
   Star,
   Music,
   Heart,
@@ -470,7 +466,7 @@ export default function EventsPage() {
             Get Involved
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Don't miss out on the amazing events happening at our church.
+            Do not miss out on the amazing events happening at our church.
             Join us and be part of our growing community!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

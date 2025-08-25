@@ -14,7 +14,7 @@ export default function AboutPage() {
           </h1>
           <p className= 'text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto' >
             Perfecting Grace Ministries International - A place where faith comes alive,
-            community thrives, and God 's love transforms lives.
+            community thrives, and the love of God transforms lives.
           </p>
         </div>
       </section>
@@ -30,11 +30,11 @@ export default function AboutPage() {
               <p className= 'text-lg text-muted-foreground leading-relaxed mb-6' >
                 At PGMI, we are committed to spreading the Gospel of Jesus Christ,
                 building a strong community of believers, and serving our local and
-                global community with God 's love and grace.
+                global community with the love of God and grace.
               </p>
               <p className= 'text-lg text-muted-foreground leading-relaxed' >
                 We believe in creating an environment where everyone can experience
-                the transformative power of God 's love and grow in their faith journey.
+                the transformative power of the love of God and grow in their faith journey.
               </p>
             </div>
             <div>
@@ -69,7 +69,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className= 'text-muted-foreground' >
-                  We are committed to teaching God 's Word faithfully and
+                  We are committed to teaching the Word of God faithfully and
                   applying biblical principles to our daily lives.
                 </p>
               </CardContent>
@@ -151,7 +151,7 @@ export default function AboutPage() {
           </h2>
           <p className= 'text-xl mb-8 max-w-2xl mx-auto' >
             Experience the love of Christ and become part of our growing community.
-            We'd love to meet you!
+            We would love to meet you!
           </p>
           <div className= 'flex flex-col sm:flex-row gap-4 justify-center' >
             <Button asChild size= 'lg' variant= 'secondary' >

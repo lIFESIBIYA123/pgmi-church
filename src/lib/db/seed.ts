@@ -1,4 +1,4 @@
-import { sermons, events, ministries, pastors } from '@/lib/data'
+import { sermons, events, ministries} from '@/lib/data'
 import { connectToDatabase } from '.'
 import { SermonModel } from '@/models/Sermon'
 import { MinistryModel } from '@/models/Ministry'
