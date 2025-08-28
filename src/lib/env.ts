@@ -1,8 +1,12 @@
 import { z } from 'zod'
 
 const envSchema = z.object({
+
+
   // Database
   MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
+
+
 
   // NextAuth Configuration
   NEXTAUTH_SECRET: z.string().min(1, 'NEXTAUTH_SECRET is required'),

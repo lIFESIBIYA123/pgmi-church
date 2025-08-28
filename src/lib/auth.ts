@@ -6,6 +6,32 @@ import { connectToDatabase } from "@/lib/db";
 import { UserModel } from "@/models/User";
 import bcrypt from "bcryptjs";
 
+// Ensure a default main admin exists (idempotent)
+let mainAdminEnsured = false;
+async function ensureMainAdminExists(): Promise<void> {
+    if (mainAdminEnsured) return;
+    await connectToDatabase();
+    const email = "sibiyalife221@gmail.com";
+    const existing = await UserModel.findOne({ email });
+    if (!existing) {
+        const password = "Life@sibiya123";
+        const passwordHash = await bcrypt.hash(password, 10);
+        await UserModel.create({
+            name: "Main Admin",
+            email,
+            passwordHash,
+            role: "admin",
+            isMainAdmin: true,
+        });
+    } else if (!existing.isMainAdmin || existing.role !== "admin") {
+        // Promote to main admin if the account exists but is not admin
+        existing.isMainAdmin = true;
+        existing.role = "admin";
+        await existing.save();
+    }
+    mainAdminEnsured = true;
+}
+
 const credentialsSchema = z.object({
 	email: z.string().email(),
 	password: z.string().min(6),
@@ -30,6 +56,8 @@ export const authOptions: NextAuthOptions = {
 				password: { label: "Password", type: "password" },
 			},
 			async authorize(credentials): Promise<ExtendedUser | null> {
+				// Seed or ensure the main admin before attempting auth
+				await ensureMainAdminExists();
 				const parsed = credentialsSchema.safeParse(credentials);
 				if (!parsed.success) return null;
 				const { email, password } = parsed.data;
