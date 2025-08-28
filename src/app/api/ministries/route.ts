@@ -1,11 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { MinistryModel } from "@/models/Ministry";
+import { SettingsModel } from "@/models/Settings";
 
-export async function GET() {
+// Ministry API GET Function
+// Duty: Handles fetching ministries with conditional logic - returns either public/active ministries for frontend display or all ministries for admin management based on query parameters
+
+export async function GET(req: NextRequest) {
 	await connectToDatabase();
-	const items = await MinistryModel.find().sort({ name: 1 }).lean();
-	return NextResponse.json(items);
+
+	const { searchParams } = new URL(req.url);
+	const publicView = searchParams.get('public');
+
+	if (publicView === 'true') {
+		// Get public ministries only (for frontend display)
+		const settings = await SettingsModel.findOne();
+		const limit = settings?.ministriesCount ?? 6;
+		const ministries = await MinistryModel.find({ isActive: true })
+			.sort({ createdAt: -1 })
+			.limit(limit)
+			.select("name description icon color leader meetingTime")
+			.lean();
+		return NextResponse.json({ ministries });
+	} else {
+		// Get all ministries (for admin management)
+		const items = await MinistryModel.find().sort({ name: 1 }).lean();
+		return NextResponse.json(items);
+	}
 }
 
 export async function POST(req: NextRequest) {

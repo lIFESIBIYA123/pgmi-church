@@ -32,6 +32,15 @@ export interface SettingsDocument {
 	name?: string;
 	tagline?: string;
 	description?: string;
+	// Home page toggles and limits
+	showLatestSermons?: boolean;
+	latestSermonsCount?: number;
+	showUpcomingEvents?: boolean;
+	upcomingEventsCount?: number;
+	showMinistries?: boolean;
+	ministriesCount?: number;
+	showPastors?: boolean;
+	pastorsCount?: number;
 	address?: ChurchAddress;
 	contact?: ChurchContact;
 	socialMedia?: ChurchSocial;
@@ -47,6 +56,14 @@ const settingsSchema = new Schema<SettingsDocument>(
 		name: String,
 		tagline: String,
 		description: String,
+		showLatestSermons: { type: Boolean, default: true },
+		latestSermonsCount: { type: Number, default: 3 },
+		showUpcomingEvents: { type: Boolean, default: true },
+		upcomingEventsCount: { type: Number, default: 3 },
+		showMinistries: { type: Boolean, default: true },
+		ministriesCount: { type: Number, default: 6 },
+		showPastors: { type: Boolean, default: true },
+		pastorsCount: { type: Number, default: 4 },
 		address: {
 			street: String,
 			city: String,

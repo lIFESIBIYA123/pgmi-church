@@ -37,8 +37,21 @@ export default function HomePage() {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [ministries, setMinistries] = useState<MinistryDisplay[]>([]);
+  const [showLatestSermons, setShowLatestSermons] = useState(true);
+  const [showUpcomingEvents, setShowUpcomingEvents] = useState(true);
+  const [showMinistries, setShowMinistries] = useState(true);
 
   useEffect(() => {
+    // Fetch settings first
+    fetch('/api/home-settings')
+      .then(res => res.json())
+      .then(s => {
+        if (typeof s?.showLatestSermons === 'boolean') setShowLatestSermons(s.showLatestSermons);
+        if (typeof s?.showUpcomingEvents === 'boolean') setShowUpcomingEvents(s.showUpcomingEvents);
+        if (typeof s?.showMinistries === 'boolean') setShowMinistries(s.showMinistries);
+      })
+      .catch(() => {});
+
     // Fetch latest sermons
     fetch('/api/sermons/latest')
       .then(res => res.json())
@@ -168,6 +181,7 @@ export default function HomePage() {
       </section>
 
       {/* Latest Sermons */}
+      {showLatestSermons && (
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -205,8 +219,10 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Ministries */}
+      {showMinistries && (
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -248,8 +264,10 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Upcoming Events */}
+      {showUpcomingEvents && (
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -294,6 +312,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Pastors Section */}
       <section className="py-16 bg-muted/30">
