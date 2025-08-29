@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { PageModel } from "@/models/Page";
-import { requireMainAdmin } from "@/lib/auth-helpers";
+import { requireMainAdmin, requireRole } from "@/lib/auth-helpers";
 
 export async function GET() {
 	await connectToDatabase();
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-	await requireMainAdmin(req);
+	await requireRole(req, ['admin', 'editor']);
 	await connectToDatabase();
 	const data = await req.json();
 	const { _id, ...rest } = data;

@@ -19,6 +19,7 @@ import {
   Clock
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ImageUpload } from '@/components/admin/image-upload';
 
 interface Sermon {
   _id: string;
@@ -221,6 +222,11 @@ export default function SermonsPage() {
                       onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
                     />
                   </div>
+
+                  <ImageUpload
+                    value={formData.thumbnail || ''}
+                    onChange={(url) => setFormData({ ...formData, thumbnail: url })}
+                  />
 
                   <div>
                     <Label htmlFor="description">Description</Label>

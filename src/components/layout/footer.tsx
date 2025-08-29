@@ -11,6 +11,7 @@ import {
   Youtube,
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 
 interface SocialLinks {
   facebook?: string
@@ -44,6 +45,7 @@ interface FooterData {
 
 export function Footer() {
   const [data, setData] = useState<FooterData | null>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
     fetch("/api/footer")
@@ -51,6 +53,10 @@ export function Footer() {
       .then((d: FooterData) => setData(d))
       .catch(() => {})
   }, [])
+
+  if (pathname.startsWith("/admin")) {
+    return null
+  }
 
   return (
     <footer className="bg-muted/50 border-t">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,14 +18,46 @@ import {
   Image as ImageIcon
 } from "lucide-react";
 import Link from "next/link";
-import { sermons, serviceImages } from '@/lib/data/sermons';
 import { BackgroundSlideshow } from "@/components/ui/background-slideshow";
 import Image from "next/image";
 
+interface Sermon {
+  _id: string;
+  id: string;
+  title: string;
+  preacher: string;
+  date: string;
+  duration?: string;
+  description?: string;
+  videoUrl?: string;
+  audioUrl?: string;
+  downloadUrl?: string;
+  thumbnail?: string;
+  category?: string;
+  tags?: string[];
+}
+
 export default function SermonsPage() {
+  const [sermons, setSermons] = useState<Sermon[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedTab, setSelectedTab] = useState('all');
+
+  useEffect(() => {
+    const fetchSermons = async () => {
+      try {
+        const response = await fetch('/api/sermons');
+        const data = await response.json();
+        setSermons(data);
+      } catch (error) {
+        console.error('Error fetching sermons:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSermons();
+  }, []);
 
   const filteredSermons = sermons.filter(sermon => {
     const matchesSearch = sermon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,9 +75,10 @@ export default function SermonsPage() {
     });
   };
 
-  const getServiceImages = (sermonId: string) => {
-    return serviceImages.filter(img => img.sermonId === sermonId);
-  };
+  // This is part of the old static data structure and is no longer needed.
+  // const getServiceImages = (sermonId: string) => {
+  //   return [];
+  // };
 
   return (
     <div className="min-h-screen">
@@ -167,53 +200,25 @@ export default function SermonsPage() {
                     </div>
 
                     {/* Sermon Thumbnail */}
-                    <div className="p-6 flex items-center justify-center">
-                      <div className="aspect-video w-full bg-muted rounded-lg flex items-center justify-center">
-                        <div className="text-center">
-                          <Play className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
-                          <p className="text-muted-foreground">Sermon Thumbnail</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Service Images */}
-                  <div className="border-t bg-muted/30">
-                    <div className="p-6">
-                      <div className="flex items-center space-x-2 mb-4">
-                        <ImageIcon className="h-5 w-5 text-primary" />
-                        <h3 className="text-lg font-semibold">Service Photos</h3>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {getServiceImages(sermon.id).map((image) => (
-                          <div key={image.id} className="group relative">
-                            <div className="aspect-square bg-muted rounded-lg flex items-center justify-center overflow-hidden">
-                              <div className="text-center p-4">
-                                <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                                <p className="text-xs text-muted-foreground">Service Photo</p>
-                              </div>
-                            </div>
-                            {image.caption && (
-                              <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-2 text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                {image.caption}
-                              </div>
-                            )}
+                    <div className="p-6 flex items-center justify-center bg-muted">
+                      {sermon.thumbnail ? (
+                        <Image src={sermon.thumbnail} alt={sermon.title} width={1280} height={720} className="w-full h-auto object-cover rounded-lg" />
+                      ) : (
+                        <div className="aspect-video w-full bg-muted rounded-lg flex items-center justify-center">
+                          <div className="text-center">
+                            <Play className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-muted-foreground">No Thumbnail</p>
                           </div>
-                        ))}
-                      </div>
-
-                      {getServiceImages(sermon.id).length === 0 && (
-                        <p className="text-muted-foreground text-center py-8">
-                          No service photos available for this sermon yet.
-                        </p>
+                        </div>
                       )}
                     </div>
                   </div>
                 </Card>
               ))}
 
-              {filteredSermons.length === 0 && (
+              {loading && <p>Loading sermons...</p>}
+
+              {!loading && filteredSermons.length === 0 && (
                 <div className="text-center py-12">
                   <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No sermons found</h3>

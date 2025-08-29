@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,24 +21,36 @@ import {
   LogOut,
 } from "lucide-react"
 
-const navigation = [
-  { name: "Dashboard", href: "/admin", icon: Home },
-  { name: "Pages", href: "/admin/pages", icon: FileText },
-  { name: "Navbar", href: "/admin/navbar", icon: BookOpen },
-  { name: "Footer", href: "/admin/footer", icon: Building2 },
-  { name: "Sermons", href: "/admin/sermons", icon: FileText },
-  { name: "Events", href: "/admin/events", icon: Calendar },
-  { name: "Ministries", href: "/admin/ministries", icon: Users },
-  { name: "Prayer Requests", href: "/admin/prayer-requests", icon: Heart },
-  { name: "Contact Messages", href: "/admin/contacts", icon: DollarSign },
-  { name: "User Management", href: "/admin/users", icon: Users },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
-  { name: "Logout", href: "/api/auth/signout", icon: LogOut },
+const allNavigation = [
+  { name: "Dashboard", href: "/admin", icon: Home, roles: ['admin', 'editor', 'pastor'] },
+  { name: "Pages", href: "/admin/pages", icon: FileText, roles: ['admin', 'editor'] },
+  { name: "Navbar", href: "/admin/navbar", icon: BookOpen, roles: ['admin'] },
+  { name: "Footer", href: "/admin/footer", icon: Building2, roles: ['admin'] },
+  { name: "Sermons", href: "/admin/sermons", icon: FileText, roles: ['admin', 'editor', 'pastor'] },
+  { name: "Events", href: "/admin/events", icon: Calendar, roles: ['admin', 'editor', 'pastor'] },
+  { name: "Ministries", href: "/admin/ministries", icon: Users, roles: ['admin', 'editor', 'pastor'] },
+  { name: "Prayer Requests", href: "/admin/prayer-requests", icon: Heart, roles: ['admin', 'pastor'] },
+  { name: "Contact Messages", href: "/admin/contacts", icon: DollarSign, roles: ['admin'] },
+  { name: "User Management", href: "/admin/users", icon: Users, roles: ['admin'] },
+  { name: "Settings", href: "/admin/settings", icon: Settings, roles: ['admin', 'editor'] },
+  { name: "Logout", href: "/api/auth/signout", icon: LogOut, roles: ['admin', 'editor', 'pastor'] },
 ]
 
 export function DashboardSidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
+  const { data: session } = useSession()
+
+  const user = session?.user as { role?: string; isMainAdmin?: boolean } | undefined
+
+  const navigation = useMemo(() => {
+    if (!user) return []
+    if (user.isMainAdmin) return allNavigation
+
+    return allNavigation.filter(item =>
+      item.roles.includes(user.role || '')
+    )
+  }, [user])
 
   return (
     <>

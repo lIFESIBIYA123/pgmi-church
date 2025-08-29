@@ -19,6 +19,7 @@ interface NavItem {
   label: string;
   href: string;
   order: number;
+  visible: boolean;
 }
 
 export default function NavbarPage() {
@@ -37,16 +38,19 @@ export default function NavbarPage() {
       const response = await fetch('/api/navbar');
       if (response.ok) {
         const data = await response.json();
-        setNavItems(data.items || []);
+        const items = data.items.map((item: any) => ({ ...item, id: item._id || item.id }));
+        setNavItems(items || []);
       } else {
         // Set default navbar items if none exist
         setNavItems([
-          { id: '1', label: 'Home', href: '/', order: 1 },
-          { id: '2', label: 'About', href: '/about', order: 2 },
-          { id: '3', label: 'Ministries', href: '/ministries', order: 3 },
-          { id: '4', label: 'Sermons', href: '/sermons', order: 4 },
-          { id: '5', label: 'Events', href: '/events', order: 5 },
-          { id: '6', label: 'Contact', href: '/contact', order: 6 },
+          { id: '1', label: 'Home', href: '/', order: 1, visible: true },
+          { id: '2', label: 'About', href: '/about', order: 2, visible: true },
+          { id: '3', label: 'Ministries', href: '/ministries', order: 3, visible: true },
+          { id: '4', label: 'Sermons', href: '/sermons', order: 4, visible: true },
+          { id: '5', label: 'Events', href: '/events', order: 5, visible: true },
+          { id: '6', label: 'Contact', href: '/contact', order: 6, visible: true },
+          { id: '7', label: 'Giving', href: '/giving', order: 7, visible: true },
+          { id: '8', label: 'Prayer', href: '/prayer', order: 8, visible: true },
         ]);
       }
     } catch (error) {
@@ -85,7 +89,8 @@ export default function NavbarPage() {
       id: Date.now().toString(),
       label: newItem.label,
       href: newItem.href,
-      order: navItems.length + 1
+      order: navItems.length + 1,
+      visible: true,
     };
 
     setNavItems([...navItems, newNavItem]);
@@ -200,35 +205,52 @@ export default function NavbarPage() {
                 <CardContent>
                   <div className='space-y-2'>
                     {navItems.map((item, index) => (
-                      <div key={item.id} className='flex items-center space-x-2 p-3 border rounded-lg'>
+                      <div key={item.id} className='flex items-center space-x-4 p-3 border rounded-lg'>
                         <div className='flex-1'>
                           <div className='font-medium'>{item.label}</div>
                           <div className='text-sm text-gray-500'>{item.href}</div>
                         </div>
-                        <div className='flex items-center space-x-1'>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => moveItem(item.id, 'up')}
-                            disabled={index === 0}
-                          >
-                            ↑
-                          </Button>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => moveItem(item.id, 'down')}
-                            disabled={index === navItems.length - 1}
-                          >
-                            ↓
-                          </Button>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => removeItem(item.id)}
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </Button>
+                        <div className='flex items-center space-x-4'>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={`visible-${item.id}`}
+                              checked={item.visible}
+                              onChange={(e) => {
+                                const newItems = navItems.map(i =>
+                                  i.id === item.id ? { ...i, visible: e.target.checked } : i
+                                );
+                                setNavItems(newItems);
+                              }}
+                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            />
+                            <Label htmlFor={`visible-${item.id}`}>Visible</Label>
+                          </div>
+                          <div className='flex items-center space-x-1'>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              onClick={() => moveItem(item.id, 'up')}
+                              disabled={index === 0}
+                            >
+                              ↑
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              onClick={() => moveItem(item.id, 'down')}
+                              disabled={index === navItems.length - 1}
+                            >
+                              ↓
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              onClick={() => removeItem(item.id)}
+                            >
+                              <Trash2 className='h-4 w-4' />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}

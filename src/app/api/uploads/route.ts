@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { requireRole } from "@/lib/auth-helpers";
 
 const hasCloudinary = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
 if (hasCloudinary) {
@@ -14,6 +15,7 @@ if (hasCloudinary) {
 
 export async function POST(req: NextRequest) {
 	try {
+    await requireRole(req, ['admin', 'editor', 'pastor']);
 		const formData = await req.formData();
 		const file = formData.get("file");
 		if (!file || !(file instanceof Blob)) {
@@ -39,12 +41,17 @@ export async function POST(req: NextRequest) {
 		await writeFile(filePath, buffer);
 		return NextResponse.json({ url: `/uploads/${filename}` });
 	} catch (e) {
-  return NextResponse.json(
-    { error: e instanceof Error ? e.message : "Internal server error" },
-    { status: 500 }
-  );
-}
-
+    if (e instanceof Error && e.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (e instanceof Error && e.message === 'Forbidden') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 

@@ -5,6 +5,7 @@ export interface NavbarItem {
 	label: string;
 	href: string;
 	order: number;
+	visible: boolean;
 }
 
 export interface NavbarDocument {
@@ -18,6 +19,7 @@ const navbarItemSchema = new Schema<NavbarItem>({
 	label: { type: String, required: true },
 	href: { type: String, required: true },
 	order: { type: Number, required: true },
+	visible: { type: Boolean, default: true },
 });
 
 const navbarSchema = new Schema<NavbarDocument>(

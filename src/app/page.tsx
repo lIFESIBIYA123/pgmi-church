@@ -17,11 +17,14 @@ interface MinistryDisplay {
   meetingTime: string;
 }
 
+import Image from "next/image";
+
 interface Sermon {
   _id: string;
   title: string;
   description: string;
   date: string;
+  thumbnail?: string;
 }
 
 interface Event {
@@ -33,6 +36,19 @@ interface Event {
   location: string;
 }
 
+interface HomepageSettings {
+  welcome: {
+    title: string;
+    content: string;
+  };
+  callToAction: {
+    title: string;
+    content: string;
+    button1: { text: string; link: string; };
+    button2: { text: string; link: string; };
+  };
+}
+
 export default function HomePage() {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
@@ -40,8 +56,14 @@ export default function HomePage() {
   const [showLatestSermons, setShowLatestSermons] = useState(true);
   const [showUpcomingEvents, setShowUpcomingEvents] = useState(true);
   const [showMinistries, setShowMinistries] = useState(true);
+  const [homepageSettings, setHomepageSettings] = useState<HomepageSettings | null>(null);
 
   useEffect(() => {
+    // Fetch homepage settings
+    fetch('/api/settings/homepage')
+      .then(res => res.json())
+      .then(data => setHomepageSettings(data))
+      .catch(() => {});
     // Fetch settings first
     fetch('/api/home-settings')
       .then(res => res.json())
@@ -125,12 +147,10 @@ export default function HomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Welcome Home
+              {homepageSettings?.welcome?.title || 'Welcome Home'}
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              At PGMI Church, we believe everyone has a place in God&apos;s family.
-              Whether you&apos;re new to faith or have been walking with Christ for years,
-              you&apos;re welcome here. Join us as we grow together in God&apos;s love and grace.
+              {homepageSettings?.welcome?.content || "At PGMI Church, we believe everyone has a place in God's family. Whether you're new to faith or have been walking with Christ for years, you're welcome here. Join us as we grow together in God's love and grace."}
             </p>
           </div>
 
@@ -196,8 +216,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sermons.slice(0, 3).map((sermon, index) => (
               <Card key={sermon._id || index} className="overflow-hidden">
-                <div className="aspect-video bg-muted flex items-center justify-center">
-                  <Play className="w-16 h-16 text-muted-foreground" />
+                <div className="aspect-video bg-muted flex items-center justify-center relative">
+                  {sermon.thumbnail ? (
+                    <Image src={sermon.thumbnail} alt={sermon.title} layout="fill" objectFit="cover" />
+                  ) : (
+                    <Play className="w-16 h-16 text-muted-foreground" />
+                  )}
                 </div>
                 <CardHeader>
                   <CardTitle className="line-clamp-2">{sermon.title}</CardTitle>
@@ -325,18 +349,17 @@ export default function HomePage() {
       <section className="py-16 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Join Us This Sunday
+            {homepageSettings?.callToAction?.title || 'Join Us This Sunday'}
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Experience the love of Christ and become part of our growing community.
-            We&apos;d love to meet you!
+            {homepageSettings?.callToAction?.content || "Experience the love of Christ and become part of our growing community. We'd love to meet you!"}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">Get in Touch</Link>
+              <Link href={homepageSettings?.callToAction?.button1?.link || '/contact'}>{homepageSettings?.callToAction?.button1?.text || 'Get in Touch'}</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/events">View Events</Link>
+              <Link href={homepageSettings?.callToAction?.button2?.link || '/events'}>{homepageSettings?.callToAction?.button2?.text || 'View Events'}</Link>
             </Button>
           </div>
         </div>
