@@ -18,7 +18,7 @@ interface NavItem {
 
 interface ApiNavItem {
   label: string
-  url?: string
+  href?: string
   visible?: boolean
   order?: number
 }
@@ -29,14 +29,14 @@ interface UserWithRole {
 
 // ---- Default navigation ----
 const defaultNav: NavItem[] = [
-  { name: 'Home', href: '/' },
-  { name: 'About Us', href: '/about' },
-  { name: 'Ministries', href: '/ministries' },
-  { name: 'Sermons', href: '/sermons' },
-  { name: 'Events', href: '/events' },
-  { name: 'Contact', href: '/contact' },
-  { name: 'Giving', href: '/giving' },
-  { name: 'Prayer', href: '/prayer' },
+  { name: 'Home', href: '/', visible: true },
+  { name: 'About Us', href: '/about', visible: true },
+  { name: 'Ministries', href: '/ministries', visible: true },
+  { name: 'Sermons', href: '/sermons', visible: true },
+  { name: 'Events', href: '/events', visible: true },
+  { name: 'Contact', href: '/contact', visible: true },
+  { name: 'Giving', href: '/giving', visible: true },
+  { name: 'Prayer', href: '/prayer', visible: true },
 ]
 
 export function Navbar() {
@@ -52,7 +52,7 @@ export function Navbar() {
           const mappedItems: NavItem[] = data.items
             .filter((i) => i.visible !== false)
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-            .map((i) => ({ name: i.label, href: i.url }))
+            .map((i) => ({ name: i.label, href: i.href }))
           setItems(mappedItems)
         }
       })
@@ -117,13 +117,6 @@ export function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
-
-            <Link
-              href="/giving"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-            >
-              Give Now
-            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -168,13 +161,6 @@ export function Navbar() {
                     </Link>
                   )}
 
-                  <Link
-                    href="/giving"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 mt-4"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Give Now
-                  </Link>
                 </div>
               </SheetContent>
             </Sheet>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,170 +20,59 @@ import Link from "next/link";
 import { BackgroundSlideshow } from "@/components/ui/background-slideshow";
 import Image from "next/image";
 
-// Mock event data - replace with real data later
-const events = [
-  {
-    id: 1,
-    title: "Sunday Worship Service",
-    date: "2024-01-21",
-    time: "10:00 AM - 11:30 AM",
-    location: "Main Sanctuary",
-    category: "Worship",
-    description: "Join us for inspiring worship, powerful preaching, and community fellowship. All are welcome!",
-    image: "/api/placeholder/400/250",
-    attendees: 150,
-    maxAttendees: 200,
-    isRecurring: true,
-    recurrence: "Every Sunday",
-    registration: false,
-    tags: ["Worship", "Community", "Fellowship"],
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Youth Ministry Meeting",
-    date: "2024-01-24",
-    time: "6:30 PM - 8:00 PM",
-    location: "Youth Center",
-    category: "Youth",
-    description: "Dynamic youth ministry for teenagers and young adults. Games, Bible study, and fun activities.",
-    image: "/api/placeholder/400/250",
-    attendees: 25,
-    maxAttendees: 40,
-    isRecurring: true,
-    recurrence: "Every Wednesday",
-    registration: false,
-    tags: ["Youth", "Bible Study", "Fun"],
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "Prayer Meeting",
-    date: "2024-01-26",
-    time: "7:00 PM - 8:30 PM",
-    location: "Prayer Room",
-    category: "Prayer",
-    description: "Corporate prayer and intercession for our community, nation, and world.",
-    image: "/api/placeholder/400/250",
-    attendees: 35,
-    maxAttendees: 50,
-    isRecurring: true,
-    recurrence: "Every Friday",
-    registration: false,
-    tags: ["Prayer", "Intercession", "Community"],
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "Community Outreach Day",
-    date: "2024-01-28",
-    time: "9:00 AM - 2:00 PM",
-    location: "Various Locations",
-    category: "Outreach",
-    description: "Serve our community through various outreach activities including food distribution and home visits.",
-    image: "/api/placeholder/400/250",
-    attendees: 45,
-    maxAttendees: 60,
-    isRecurring: false,
-    recurrence: "Monthly",
-    registration: true,
-    tags: ["Outreach", "Service", "Community"],
-    featured: true,
-  },
-  {
-    id: 5,
-    title: "Bible Study Class",
-    date: "2024-01-29",
-    time: "7:00 PM - 8:30 PM",
-    location: "Fellowship Hall",
-    category: "Education",
-    description: "In-depth Bible study exploring the book of Romans. All levels welcome.",
-    image: "/api/placeholder/400/250",
-    attendees: 30,
-    maxAttendees: 40,
-    isRecurring: true,
-    recurrence: "Every Monday",
-    registration: false,
-    tags: ["Bible Study", "Education", "Romans"],
-    featured: false,
-  },
-  {
-    id: 6,
-    title: "Worship Team Practice",
-    date: "2024-01-30",
-    time: "6:00 PM - 8:00 PM",
-    location: "Worship Center",
-    category: "Music",
-    description: "Practice session for our worship team. Open to all musicians and vocalists.",
-    image: "/api/placeholder/400/250",
-    attendees: 15,
-    maxAttendees: 25,
-    isRecurring: true,
-    recurrence: "Every Tuesday",
-    registration: false,
-    tags: ["Music", "Worship", "Practice"],
-    featured: false,
-  },
-  {
-    id: 7,
-    title: "Family Movie Night",
-    date: "2024-02-03",
-    time: "6:00 PM - 8:30 PM",
-    location: "Fellowship Hall",
-    category: "Family",
-    description: "Family-friendly movie night with popcorn and refreshments. Great for all ages!",
-    image: "/api/placeholder/400/250",
-    attendees: 80,
-    maxAttendees: 100,
-    isRecurring: false,
-    recurrence: "Monthly",
-    registration: true,
-    tags: ["Family", "Entertainment", "Community"],
-    featured: true,
-  },
-  {
-    id: 8,
-    title: "Mission Trip Planning Meeting",
-    date: "2024-02-05",
-    time: "7:00 PM - 8:30 PM",
-    location: "Conference Room",
-    category: "Missions",
-    description: "Planning meeting for our upcoming summer mission trip to Guatemala.",
-    image: "/api/placeholder/400/250",
-    attendees: 20,
-    maxAttendees: 30,
-    isRecurring: false,
-    recurrence: "One-time",
-    registration: true,
-    tags: ["Missions", "Planning", "Guatemala"],
-    featured: false,
-  },
-];
+interface Event {
+  _id: string;
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  description: string;
+  image?: string;
+  registration?: boolean;
+  featured?: boolean;
+  tags?: string[];
+  attendees?: number;
+  maxAttendees?: number;
+}
 
 const categories = ["All", "Worship", "Youth", "Prayer", "Outreach", "Education", "Music", "Family", "Missions"];
 
 export default function EventsPage() {
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [pastEvents, setPastEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedTab, setSelectedTab] = useState('upcoming');
 
-  const filteredEvents = events.filter(event => {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('/api/events');
+        const data = await response.json();
+        setUpcomingEvents(data.upcomingEvents || []);
+        setPastEvents(data.pastEvents || []);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const filteredUpcomingEvents = upcomingEvents.filter(event => {
     if (selectedCategory === 'All') return true;
     return event.category === selectedCategory;
   });
 
-  const upcomingEvents = filteredEvents.filter(event => {
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    return eventDate >= today;
+  const filteredPastEvents = pastEvents.filter(event => {
+    if (selectedCategory === 'All') return true;
+    return event.category === selectedCategory;
   });
 
-  const pastEvents = filteredEvents.filter(event => {
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    return eventDate < today;
-  });
-
-  const featuredEvents = filteredEvents.filter(event => event.featured);
+  const featuredEvents = upcomingEvents.filter(event => event.featured);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -266,12 +155,16 @@ export default function EventsPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredEvents.map((event) => (
-                <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card key={event._id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="aspect-video bg-muted flex items-center justify-center relative">
-                    <div className="text-center">
-                      <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-muted-foreground">Event Image</p>
-                    </div>
+                    {event.image ? (
+                      <Image src={event.image} alt={event.title} layout="fill" objectFit="cover" />
+                    ) : (
+                      <div className="text-center">
+                        <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-muted-foreground">Event Image</p>
+                      </div>
+                    )}
                     <Badge className="absolute top-2 right-2 bg-primary">Featured</Badge>
                   </div>
                   <CardHeader>
@@ -332,20 +225,27 @@ export default function EventsPage() {
             </TabsList>
 
             <TabsContent value="upcoming" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {upcomingEvents.map((event) => (
-                  <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="aspect-video bg-muted flex items-center justify-center relative">
-                      <div className="text-center">
-                        <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-muted-foreground">Event Image</p>
+              {loading ? (
+                <p>Loading events...</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredUpcomingEvents.map((event) => (
+                    <Card key={event._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className="aspect-video bg-muted flex items-center justify-center relative">
+                        {event.image ? (
+                          <Image src={event.image} alt={event.title} layout="fill" objectFit="cover" />
+                        ) : (
+                          <div className="text-center">
+                            <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-muted-foreground">Event Image</p>
+                          </div>
+                        )}
+                        {event.registration && (
+                          <Badge className="absolute top-2 right-2 bg-green-600">Registration Required</Badge>
+                        )}
                       </div>
-                      {event.registration && (
-                        <Badge className="absolute top-2 right-2 bg-green-600">Registration Required</Badge>
-                      )}
-                    </div>
-                    <CardHeader>
-                      <CardTitle className="text-xl">{event.title}</CardTitle>
+                      <CardHeader>
+                        <CardTitle className="text-xl">{event.title}</CardTitle>
                       <CardDescription className="space-y-1">
                         <p className="font-medium text-foreground">{event.category}</p>
                         <p className="text-sm text-muted-foreground">{formatDate(event.date)}</p>
@@ -383,11 +283,11 @@ export default function EventsPage() {
 
                       <div className="flex gap-2">
                         <Button asChild className="flex-1">
-                          <Link href={`/events/${event.id}`}>Learn More</Link>
+                          <Link href={`/events/${event._id}`}>Learn More</Link>
                         </Button>
                         {event.registration && (
                           <Button asChild variant="outline">
-                            <Link href={`/events/${event.id}/register`}>Register</Link>
+                            <Link href={`/events/${event._id}/register`}>Register</Link>
                           </Button>
                         )}
                       </div>
@@ -396,7 +296,7 @@ export default function EventsPage() {
                 ))}
               </div>
 
-              {upcomingEvents.length === 0 && (
+              {!loading && filteredUpcomingEvents.length === 0 && (
                 <div className="text-center py-12">
                   <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No upcoming events</h3>
@@ -406,18 +306,25 @@ export default function EventsPage() {
             </TabsContent>
 
             <TabsContent value="past" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pastEvents.map((event) => (
-                  <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow opacity-75">
-                    <div className="aspect-video bg-muted flex items-center justify-center relative">
-                      <div className="text-center">
-                        <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-muted-foreground">Event Image</p>
+              {loading ? (
+                <p>Loading events...</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredPastEvents.map((event) => (
+                    <Card key={event._id} className="overflow-hidden hover:shadow-lg transition-shadow opacity-75">
+                      <div className="aspect-video bg-muted flex items-center justify-center relative">
+                        {event.image ? (
+                          <Image src={event.image} alt={event.title} layout="fill" objectFit="cover" />
+                        ) : (
+                          <div className="text-center">
+                            <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-muted-foreground">Event Image</p>
+                          </div>
+                        )}
+                        <Badge className="absolute top-2 right-2 bg-muted-foreground">Past Event</Badge>
                       </div>
-                      <Badge className="absolute top-2 right-2 bg-muted-foreground">Past Event</Badge>
-                    </div>
-                    <CardHeader>
-                      <CardTitle className="text-xl">{event.title}</CardTitle>
+                      <CardHeader>
+                        <CardTitle className="text-xl">{event.title}</CardTitle>
                       <CardDescription className="space-y-1">
                         <p className="font-medium text-foreground">{event.category}</p>
                         <p className="text-sm text-muted-foreground">{formatDate(event.date)}</p>
@@ -440,14 +347,14 @@ export default function EventsPage() {
                       </div>
 
                       <Button asChild variant="outline" className="w-full">
-                        <Link href={`/events/${event.id}`}>View Details</Link>
+                        <Link href={`/events/${event._id}`}>View Details</Link>
                       </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
 
-              {pastEvents.length === 0 && (
+              {!loading && filteredPastEvents.length === 0 && (
                 <div className="text-center py-12">
                   <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No past events</h3>

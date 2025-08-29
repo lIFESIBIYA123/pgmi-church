@@ -11,6 +11,7 @@ export async function getAuthToken(req: NextRequest) {
 export async function requireRole(req: NextRequest, allowed: Role[] | "any") {
 	const token = await getAuthToken(req);
 	if (!token) throw new Error("Unauthorized");
+	if (token.isMainAdmin) return token; // Main admin has access to everything
 	if (allowed === "any") return token;
 	if (!allowed.includes((token.role as Role) ?? "viewer")) {
 		throw new Error("Forbidden");
