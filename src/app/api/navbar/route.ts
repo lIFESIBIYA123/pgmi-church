@@ -10,12 +10,12 @@ export async function GET() {
 		// Return default navbar items if none exist
 		return NextResponse.json({
 			items: [
-				{ id: '1', label: 'Home', href: '/', order: 1 },
-				{ id: '2', label: 'About', href: '/about', order: 2 },
-				{ id: '3', label: 'Ministries', href: '/ministries', order: 3 },
-				{ id: '4', label: 'Sermons', href: '/sermons', order: 4 },
-				{ id: '5', label: 'Events', href: '/events', order: 5 },
-				{ id: '6', label: 'Contact', href: '/contact', order: 6 },
+				{ id: '1', label: 'Home', href: '/', order: 1, visible: true },
+				{ id: '2', label: 'About', href: '/about', order: 2, visible: true },
+				{ id: '3', label: 'Ministries', href: '/ministries', order: 3, visible: true },
+				{ id: '4', label: 'Sermons', href: '/sermons', order: 4, visible: true },
+				{ id: '5', label: 'Events', href: '/events', order: 5, visible: true },
+				{ id: '6', label: 'Contact', href: '/contact', order: 6, visible: true },
 			]
 		});
 	}

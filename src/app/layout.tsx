@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { LayoutFrame } from "@/components/layout/layout-frame";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,9 +38,9 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col">
           <AuthSessionProvider>
             <Navbar />
-            <main className="flex-1">
+            <LayoutFrame>
               {children}
-            </main>
+            </LayoutFrame>
             <Footer />
           </AuthSessionProvider>
         </div>

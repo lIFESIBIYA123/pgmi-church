@@ -39,7 +39,7 @@ const defaultNav: NavItem[] = [
   { name: 'Prayer', href: '/prayer' },
 ]
 
-export function Navbar() {
+export function Navbar({ live }: { live?: { isLive: boolean; url?: string; title?: string } }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [items, setItems] = useState<NavItem[]>(defaultNav)
   const { data: session } = useSession()
@@ -50,7 +50,7 @@ export function Navbar() {
       .then((data: { items?: ApiNavItem[] }) => {
         if (Array.isArray(data?.items) && data.items.length > 0) {
           const mappedItems: NavItem[] = data.items
-            .filter((i) => i.visible !== false)
+            .filter((i) => i.visible !== false && (i.label?.trim?.() ?? '') !== '') // only visible items with label and url
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
             .map((i) => ({ name: i.label, href: i.url }))
           setItems(mappedItems)
@@ -78,12 +78,7 @@ export function Navbar() {
                 className="h-10 w-10 flex-shrink-0"
                 priority
               />
-              <div className="flex flex-col min-w-0">
-                <span className="text-xl font-bold text-foreground">PGMI</span>
-                <span className="text-xs text-muted-foreground leading-tight max-w-[200px] lg:max-w-none">
-                  Perfecting Grace Ministries International
-                </span>
-              </div>
+
             </Link>
           </div>
 
@@ -106,6 +101,15 @@ export function Navbar() {
                   {item.name}
                 </span>
               )
+            )}
+
+            {live?.isLive && live.url && (
+              <Link
+                href={live.url}
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 px-2.5 py-1"
+            >
+              Live
+            </Link>
             )}
 
             {user?.role && (
@@ -155,6 +159,17 @@ export function Navbar() {
                         {item.name}
                       </span>
                     )
+                  )}
+
+                  {live?.isLive && live.url && (
+                  <Link
+                    href={live.url}
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 px-2.5 py-1"
+                    rel="_blank"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Live
+                  </Link>
                   )}
 
                   {user?.role && (
