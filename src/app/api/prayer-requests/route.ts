@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { PrayerRequestModel } from "@/models/PrayerRequest";
+import { requireRole } from "@/lib/auth-helpers";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+	await requireRole(req, ["admin", "pastor", "editor"]);
 	await connectToDatabase();
-	// Only pastor or admin can list requests
-	// Note: middleware already restricts /api/admin, but this is public route; gate here if needed
 	const items = await PrayerRequestModel.find().sort({ createdAt: -1 }).lean();
 	return NextResponse.json(items);
 }
+
 
 export async function POST(req: NextRequest) {
 	await connectToDatabase();
@@ -18,6 +19,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+	await requireRole(req, ["admin", "pastor", "editor"]);
 	await connectToDatabase();
 	const data = await req.json();
 	const { _id, ...rest } = data;

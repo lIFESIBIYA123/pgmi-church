@@ -11,6 +11,7 @@ import {
   Youtube,
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 
 interface SocialLinks {
   facebook?: string
@@ -29,6 +30,7 @@ interface Address {
 interface FooterLink {
   label: string
   url?: string
+  enabled?: boolean
 }
 
 interface FooterData {
@@ -44,6 +46,7 @@ interface FooterData {
 
 export function Footer() {
   const [data, setData] = useState<FooterData | null>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
     fetch("/api/footer")
@@ -51,6 +54,9 @@ export function Footer() {
       .then((d: FooterData) => setData(d))
       .catch(() => {})
   }, [])
+
+  // Hide footer on admin routes
+  if (pathname?.startsWith("/admin")) return null
 
   return (
     <footer className="bg-muted/50 border-t">
@@ -117,22 +123,24 @@ export function Footer() {
                 { label: "Ministries", url: "/ministries" },
                 { label: "Sermons", url: "/sermons" },
                 { label: "Events", url: "/events" },
-              ]).map((l: FooterLink, index) => (
-                <li key={`quick-${index}`}>
-                  {l.url && l.url.trim() !== "" && l.url !== "#" ? (
-                    <Link
-                      href={l.url}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer block py-1"
-                    >
-                      {l.label}
-                    </Link>
-                  ) : (
-                    <span className="text-sm text-muted-foreground block py-1">
-                      {l.label}
-                    </span>
-                  )}
-                </li>
-              ))}
+              ])
+                .filter((link: FooterLink) => link.enabled !== false)
+                .map((link: FooterLink, index) => (
+                  <li key={`quick-${index}`}>
+                    {link.url && link.url.trim() !== "" && link.url !== "#" ? (
+                      <Link
+                        href={link.url}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer block py-1"
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <span className="text-sm text-muted-foreground block py-1">
+                        {link.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
             </ul>
           </div>
 
@@ -144,18 +152,18 @@ export function Footer() {
                 { label: "Online Giving", url: "/giving" },
                 { label: "Prayer Requests", url: "/prayer" },
                 { label: "Contact Us", url: "/contact" },
-              ]).map((l: FooterLink, index) => (
+              ]).map((link: FooterLink, index) => (
                 <li key={`service-${index}`}>
-                  {l.url && l.url.trim() !== "" && l.url !== "#" ? (
+                  {link.url && link.url.trim() !== "" && link.url !== "#" ? (
                     <Link
-                      href={l.url}
+                      href={link.url}
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer block py-1"
                     >
-                      {l.label}
+                      {link.label}
                     </Link>
                   ) : (
                     <span className="text-sm text-muted-foreground block py-1">
-                      {l.label}
+                      {link.label}
                     </span>
                   )}
                 </li>

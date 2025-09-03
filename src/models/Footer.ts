@@ -23,6 +23,7 @@ export interface Contact {
 export interface QuickLink {
 	label: string;
 	href: string;
+	enabled?: boolean;
 }
 
 export interface FooterDocument {
@@ -61,6 +62,7 @@ const socialMediaSchema = new Schema<SocialMedia>({
 const quickLinkSchema = new Schema<QuickLink>({
 	label: { type: String, required: true },
 	href: { type: String, required: true },
+	enabled: { type: Boolean, default: true },
 });
 
 const footerSchema = new Schema<FooterDocument>(

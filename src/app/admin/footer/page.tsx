@@ -16,6 +16,12 @@ import {
   Globe
 } from 'lucide-react';
 
+interface QuickLink {
+  label: string;
+  href: string;
+  enabled?: boolean;
+}
+
 interface FooterData {
   churchName: string;
   tagline: string;
@@ -37,11 +43,33 @@ interface FooterData {
     youtube?: string;
     twitter?: string;
   };
-  quickLinks: {
-    label: string;
-    href: string;
-  }[];
+  quickLinks: QuickLink[];
   copyright: string;
+}
+
+interface FooterApiResponse {
+  churchName?: string;
+  tagline?: string;
+  description?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  contact?: {
+    phone?: string;
+    email?: string;
+  };
+  socialMedia?: {
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+    twitter?: string;
+  };
+  quickLinks?: QuickLink[];
+  copyright?: string;
 }
 
 export default function FooterPage() {
@@ -70,12 +98,12 @@ export default function FooterPage() {
       twitter: ''
     },
     quickLinks: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Ministries', href: '/ministries' },
-      { label: 'Sermons', href: '/sermons' },
-      { label: 'Events', href: '/events' },
-      { label: 'Contact', href: '/contact' },
-      { label: 'Prayer Requests', href: '/prayer' }
+      { label: 'About Us', href: '/about', enabled: true },
+      { label: 'Ministries', href: '/ministries', enabled: true },
+      { label: 'Sermons', href: '/sermons', enabled: true },
+      { label: 'Events', href: '/events', enabled: true },
+      { label: 'Contact', href: '/contact', enabled: true },
+      { label: 'Prayer Requests', href: '/prayer', enabled: true }
     ],
     copyright: '© 2024 PGMI Church. All rights reserved.'
   });
@@ -88,7 +116,7 @@ export default function FooterPage() {
     try {
       const response = await fetch('/api/footer');
       if (response.ok) {
-        const data = await response.json();
+        const data: FooterApiResponse = await response.json();
         if (data) {
           setFooterData({
             churchName: data.churchName || 'PGMI Church',
@@ -111,14 +139,14 @@ export default function FooterPage() {
               youtube: data.socialMedia?.youtube || '',
               twitter: data.socialMedia?.twitter || ''
             },
-            quickLinks: data.quickLinks || [
+            quickLinks: (data.quickLinks || [
               { label: 'About Us', href: '/about' },
               { label: 'Ministries', href: '/ministries' },
               { label: 'Sermons', href: '/sermons' },
               { label: 'Events', href: '/events' },
               { label: 'Contact', href: '/contact' },
               { label: 'Prayer Requests', href: '/prayer' }
-            ],
+            ]).map((link: QuickLink) => ({ ...link, enabled: link.enabled !== false })),
             copyright: data.copyright || '© 2024 PGMI Church. All rights reserved.'
           });
         }
@@ -152,16 +180,20 @@ export default function FooterPage() {
     }
   };
 
-  const updateQuickLink = (index: number, field: 'label' | 'href', value: string) => {
+  const updateQuickLink = (index: number, field: keyof QuickLink, value: string | boolean) => {
     const newQuickLinks = [...footerData.quickLinks];
-    newQuickLinks[index] = { ...newQuickLinks[index], [field]: value };
+    if (field === 'enabled') {
+      newQuickLinks[index][field] = value as boolean;
+    } else {
+      newQuickLinks[index][field] = value as string;
+    }
     setFooterData({ ...footerData, quickLinks: newQuickLinks });
   };
 
   const addQuickLink = () => {
     setFooterData({
       ...footerData,
-      quickLinks: [...footerData.quickLinks, { label: '', href: '' }]
+      quickLinks: [...footerData.quickLinks, { label: '', href: '', enabled: true }]
     });
   };
 
@@ -425,7 +457,7 @@ export default function FooterPage() {
                 <CardContent className='space-y-4'>
                   {footerData.quickLinks.map((link, index) => (
                     <div key={index} className='flex items-center space-x-2'>
-                      <div className='flex-1 grid grid-cols-2 gap-2'>
+                      <div className='flex-1 grid grid-cols-3 gap-2'>
                         <Input
                           placeholder='Link Label'
                           value={link.label}
@@ -436,6 +468,14 @@ export default function FooterPage() {
                           value={link.href}
                           onChange={(e) => updateQuickLink(index, 'href', e.target.value)}
                         />
+                        <label className='flex items-center space-x-2 text-sm'>
+                          <input
+                            type='checkbox'
+                            checked={link.enabled !== false}
+                            onChange={(e) => updateQuickLink(index, 'enabled', e.target.checked)}
+                          />
+                          <span>Enabled</span>
+                        </label>
                       </div>
                       <Button
                         size='sm'

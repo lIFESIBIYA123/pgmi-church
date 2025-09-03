@@ -19,6 +19,11 @@ interface NavItem {
   label: string;
   href: string;
   order: number;
+  visible?: boolean;
+}
+
+interface NavbarApiResponse {
+  items: NavItem[];
 }
 
 export default function NavbarPage() {
@@ -36,17 +41,20 @@ export default function NavbarPage() {
     try {
       const response = await fetch('/api/navbar');
       if (response.ok) {
-        const data = await response.json();
-        setNavItems(data.items || []);
+        const data: NavbarApiResponse = await response.json();
+        setNavItems((data.items || []).map((item: NavItem) => ({
+          ...item,
+          visible: item.visible !== false
+        })));
       } else {
         // Set default navbar items if none exist
         setNavItems([
-          { id: '1', label: 'Home', href: '/', order: 1 },
-          { id: '2', label: 'About', href: '/about', order: 2 },
-          { id: '3', label: 'Ministries', href: '/ministries', order: 3 },
-          { id: '4', label: 'Sermons', href: '/sermons', order: 4 },
-          { id: '5', label: 'Events', href: '/events', order: 5 },
-          { id: '6', label: 'Contact', href: '/contact', order: 6 },
+          { id: '1', label: 'Home', href: '/', order: 1, visible: true },
+          { id: '2', label: 'About', href: '/about', order: 2, visible: true },
+          { id: '3', label: 'Ministries', href: '/ministries', order: 3, visible: true },
+          { id: '4', label: 'Sermons', href: '/sermons', order: 4, visible: true },
+          { id: '5', label: 'Events', href: '/events', order: 5, visible: true },
+          { id: '6', label: 'Contact', href: '/contact', order: 6, visible: true },
         ]);
       }
     } catch (error) {
@@ -85,7 +93,8 @@ export default function NavbarPage() {
       id: Date.now().toString(),
       label: newItem.label,
       href: newItem.href,
-      order: navItems.length + 1
+      order: navItems.length + 1,
+      visible: true,
     };
 
     setNavItems([...navItems, newNavItem]);
@@ -113,6 +122,12 @@ export default function NavbarPage() {
     });
 
     setNavItems(newItems);
+  };
+
+  const toggleVisible = (id: string) => {
+    setNavItems(items => items.map(item =>
+      item.id === id ? { ...item, visible: !item.visible } : item
+    ));
   };
 
   if (!session) return <div>Loading...</div>;
@@ -205,30 +220,36 @@ export default function NavbarPage() {
                           <div className='font-medium'>{item.label}</div>
                           <div className='text-sm text-gray-500'>{item.href}</div>
                         </div>
-                        <div className='flex items-center space-x-1'>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => moveItem(item.id, 'up')}
-                            disabled={index === 0}
-                          >
-                            ↑
-                          </Button>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => moveItem(item.id, 'down')}
-                            disabled={index === navItems.length - 1}
-                          >
-                            ↓
-                          </Button>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => removeItem(item.id)}
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </Button>
+                        <div className='flex items-center space-x-3'>
+                          <label className='flex items-center space-x-1 text-sm'>
+                            <input type='checkbox' checked={item.visible !== false} onChange={() => toggleVisible(item.id)} />
+                            <span>Visible</span>
+                          </label>
+                          <div className='flex items-center space-x-1'>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              onClick={() => moveItem(item.id, 'up')}
+                              disabled={index === 0}
+                            >
+                              ↑
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              onClick={() => moveItem(item.id, 'down')}
+                              disabled={index === navItems.length - 1}
+                            >
+                              ↓
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              onClick={() => removeItem(item.id)}
+                            >
+                              <Trash2 className='h-4 w-4' />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}

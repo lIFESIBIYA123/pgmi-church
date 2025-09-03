@@ -19,6 +19,7 @@ interface NavItem {
 interface ApiNavItem {
   label: string
   url?: string
+  href: string
   visible?: boolean
   order?: number
 }
